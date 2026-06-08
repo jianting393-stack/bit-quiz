@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>你是哪种北理人？</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --pink:    #F2A7B0;
+    --pink-lt: #FBEAF0;
+    --pink-dk: #6B1E2A;
+    --pink-md: #D4537E;
+    --mint:    #9FE1CB;
+    --mint-lt: #E1F5EE;
+    --mint-dk: #085041;
+    --peach:   #F0997B;
+    --peach-lt:#FAECE7;
+    --peach-dk:#712B13;
+    --lav:     #AFA9EC;
+    --lav-lt:  #EEEDFE;
+    --lav-dk:  #3C3489;
+    --cream:   #FDF6F0;
+    --text:    #3D2030;
+    --muted:   #9C7B75;
+    --light:   #C4929A;
+    --border:  #F4DDE8;
+  }
+
+  html, body {
+    min-height: 100%;
+    background: #FFF9F5;
+    font-family: 'Noto Sans SC', sans-serif;
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 420px;
+    min-height: 100vh;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── COVER ── */
+  .cover {
+    min-height: 100vh;
+    background: var(--cream);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .deco { position: absolute; border-radius: 50%; }
+  .d1 { width: 200px; height: 200px; background: #FBEAF0; top: -60px; right: -50px; }
+  .d2 { width: 120px; height: 120px; background: #E1F5EE; bottom: 60px; left: -30px; }
+  .d3 { width: 80px;  height: 80px;  background: #EEEDFE; bottom: 180px; right: 30px; }
+  .d4 { width: 60px;  height: 60px;  background: #FAEEDA; top: 130px; left: 40px; }
+  .d5 { width: 40px;  height: 40px;  background: #FAECE7; top: 60px; left: 120px; }
+
+  .cover-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--light);
+    margin-bottom: 1.5rem;
+    position: relative; z-index: 1;
+  }
+
+  .cover-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 32px;
+    font-weight: 500;
+    color: #4A2C2A;
+    line-height: 1.4;
+    margin-bottom: 0.75rem;
+    position: relative; z-index: 1;
+  }
+
+  .cover-title span {
+    display: inline-block;
+    background: var(--pink);
+    color: #fff;
+    border-radius: 8px;
+    padding: 0 6px;
+  }
+
+  .cover-desc {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+    position: relative; z-index: 1;
+    line-height: 1.7;
+  }
+
+  .cover-types {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 2.5rem;
+    width: 100%;
+    position: relative; z-index: 1;
+  }
+
+  .type-chip {
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: left;
+  }
+
+  .type-chip .chip-icon { font-size: 20px; }
+
+  .start-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 40px;
+    border-radius: 30px;
+    border: none;
+    background: var(--pink);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    font-family: 'Noto Sans SC', sans-serif;
+    cursor: pointer;
+    position: relative; z-index: 1;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .start-btn:hover { background: #EE8E99; }
+  .start-btn:active { transform: scale(0.97); }
+
+  .cover-hint {
+    font-size: 12px;
+    color: var(--light);
+    margin-top: 1rem;
+    position: relative; z-index: 1;
+  }
+
+  /* ── QUIZ ── */
+  .quiz-wrap {
+    min-height: 100vh;
+    padding: 2rem 1.5rem 3rem;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .progress-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    margin-bottom: 1.75rem;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--pink) 0%, #ED93B1 100%);
+    border-radius: 3px;
+    transition: width 0.45s cubic-bezier(.4,0,.2,1);
+  }
+
+  .q-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .q-count { font-size: 13px; color: var(--light); font-weight: 500; }
+
+  .q-dots { display: flex; gap: 6px; }
+  .q-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--border);
+    transition: background 0.2s;
+  }
+  .q-dot.done { background: var(--pink); }
+  .q-dot.cur  { background: var(--pink-md); width: 18px; border-radius: 4px; }
+
+  .q-text {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.55;
+    margin-bottom: 1.75rem;
+    flex-shrink: 0;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 14px 16px;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text);
+    font-family: 'Noto Sans SC', sans-serif;
+    text-align: left;
+    transition: border-color 0.15s, background 0.15s;
+    line-height: 1.5;
+  }
+  .opt:hover { border-color: var(--pink); background: #FFF5F7; }
+  .opt.selected { border-color: var(--pink-md); background: var(--pink-lt); }
+
+  .opt-letter {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 500; color: var(--light);
+    flex-shrink: 0;
+    transition: background 0.15s, color 0.15s;
+  }
+  .opt.selected .opt-letter { background: var(--pink); color: #fff; }
+
+  .q-footer {
+    margin-top: auto;
+    padding-top: 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .next-btn {
+    padding: 12px 28px;
+    border-radius: 24px;
+    border: none;
+    background: var(--pink);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Noto Sans SC', sans-serif;
+    cursor: pointer;
+    opacity: 0.3;
+    pointer-events: none;
+    transition: opacity 0.2s, background 0.15s, transform 0.1s;
+  }
+  .next-btn.active { opacity: 1; pointer-events: auto; }
+  .next-btn.active:hover { background: #EE8E99; }
+  .next-btn.active:active { transform: scale(0.97); }
+
+  /* ── RESULT ── */
+  .result-wrap {
+    min-height: 100vh;
+    padding: 0 0 3rem;
+  }
+
+  .result-hero {
+    padding: 3rem 1.5rem 2rem;
+    text-align: center;
+  }
+
+  .result-emoji-wrap {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px;
+    margin: 0 auto 1.25rem;
+  }
+
+  .result-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 28px;
+    font-weight: 500;
+    margin-bottom: 0.35rem;
+  }
+  .result-sub { font-size: 14px; opacity: 0.75; margin-bottom: 1rem; }
+  .result-tag {
+    display: inline-block;
+    padding: 5px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .result-body { padding: 0 1.5rem; }
+
+  .result-desc {
+    font-size: 14px;
+    line-height: 1.85;
+    color: #5A3040;
+    background: var(--pink-lt);
+    border-radius: 16px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .trait-block {
+    background: var(--cream);
+    border-radius: 16px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1.75rem;
+  }
+  .trait-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--light);
+    letter-spacing: 0.06em;
+    margin-bottom: 1rem;
+  }
+  .trait-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .trait-name { font-size: 13px; color: #6B4050; width: 54px; flex-shrink: 0; }
+  .trait-bg { flex: 1; height: 7px; background: #F4DDE8; border-radius: 4px; overflow: hidden; }
+  .trait-fill { height: 100%; border-radius: 4px; }
+  .trait-pct { font-size: 12px; color: var(--light); width: 28px; text-align: right; }
+
+  .result-actions { display: flex; gap: 10px; }
+  .btn-restart {
+    flex: 1;
+    padding: 13px;
+    border-radius: 24px;
+    border: 1.5px solid var(--border);
+    background: #fff;
+    color: var(--pink-md);
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Noto Sans SC', sans-serif;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-restart:hover { background: var(--pink-lt); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- COVER -->
+  <div class="page active" id="page-cover">
+    <div class="cover">
+      <div class="deco d1"></div>
+      <div class="deco d2"></div>
+      <div class="deco d3"></div>
+      <div class="deco d4"></div>
+      <div class="deco d5"></div>
+
+      <div class="cover-eyebrow">BIT ZHUHAI · 性格测评</div>
+
+      <div class="cover-title">
+        你是哪种<br><span>北理人</span>？
+      </div>
+
+      <div class="cover-desc">6道日常小题<br>测出属于你的北理人格类型</div>
+
+      <div class="cover-types">
+        <div class="type-chip" style="background:#FBEAF0;color:#72243E;">
+          <span class="chip-icon">🔬</span><span>Lab 人</span>
+        </div>
+        <div class="type-chip" style="background:#E1F5EE;color:#085041;">
+          <span class="chip-icon">🌙</span><span>躺平人</span>
+        </div>
+        <div class="type-chip" style="background:#FAECE7;color:#712B13;">
+          <span class="chip-icon">☕</span><span>搭子人</span>
+        </div>
+        <div class="type-chip" style="background:#EEEDFE;color:#3C3489;">
+          <span class="chip-icon">🗺️</span><span>冲浪人</span>
+        </div>
+      </div>
+
+      <button class="start-btn" onclick="startQuiz()">开始测试 →</button>
+      <div class="cover-hint">约需 1 分钟 · 共 6 题</div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="page" id="page-quiz">
+    <div class="quiz-wrap">
+      <div class="progress-track">
+        <div class="progress-fill" id="progress" style="width:0%"></div>
+      </div>
+      <div class="q-header">
+        <span class="q-count" id="q-count">Q1 / 6</span>
+        <div class="q-dots" id="q-dots"></div>
+      </div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options"></div>
+      <div class="q-footer">
+        <button class="next-btn" id="next-btn">下一题 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="page" id="page-result">
+    <div class="result-wrap">
+      <div class="result-hero" id="result-hero"></div>
+      <div class="result-body">
+        <div class="result-desc" id="result-desc"></div>
+        <div class="trait-block">
+          <div class="trait-head"><span>特质雷达</span><span>满分 100</span></div>
+          <div id="trait-bars"></div>
+        </div>
+        <div class="result-actions">
+          <button class="btn-restart" onclick="restart()">再测一次</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  { text: "周末早上10点，你在哪？", options: [
+    { label: "图书馆占好位了", type: "lab" },
+    { label: "还没起，手机刷了两小时", type: "rest" },
+    { label: "约朋友去喝咖啡了", type: "social" },
+    { label: "参加社团活动/比赛", type: "go" }
+  ]},
+  { text: "期末考试周，你的状态是？", options: [
+    { label: "提前两周开始整理笔记", type: "lab" },
+    { label: "考前一晚疯狂背，居然还行", type: "rest" },
+    { label: "和朋友组队互相讲题", type: "social" },
+    { label: "复习间隙还在刷offer/活动", type: "go" }
+  ]},
+  { text: "你的手机相册里最多的是？", options: [
+    { label: "实验数据截图/读书笔记", type: "lab" },
+    { label: "躺在床上随手拍的天花板", type: "rest" },
+    { label: "各种梗图和朋友聚餐", type: "social" },
+    { label: "活动合照和证书", type: "go" }
+  ]},
+  { text: "食堂吃饭，你会……", options: [
+    { label: "一个人边吃边看论文/视频", type: "lab" },
+    { label: "点外卖，不想下楼", type: "rest" },
+    { label: "必须找到伴再去", type: "social" },
+    { label: "顺便认识了一个新朋友", type: "go" }
+  ]},
+  { text: "你最常说的一句话是？", options: [
+    { label: "这个逻辑有问题……", type: "lab" },
+    { label: "好累，歇会儿", type: "rest" },
+    { label: "走，吃饭去！", type: "social" },
+    { label: "哇这个活动好有意思！", type: "go" }
+  ]},
+  { text: "毕业典礼上，朋友会说你是……", options: [
+    { label: "那个成绩最好但最难约出来的人", type: "lab" },
+    { label: "那个最佛系但莫名混得很好的人", type: "rest" },
+    { label: "那个认识全班同学的人", type: "social" },
+    { label: "那个简历最长的人", type: "go" }
+  ]}
+];
+
+const results = {
+  lab: {
+    emoji: "🔬", title: "Lab 人", sub: "实验室的灯永远亮着",
+    tag: "专注型", tagBg: "#FBEAF0", tagColor: "#72243E",
+    heroBg: "#FDF6F0", emojiWrapBg: "#FBEAF0", titleColor: "#4A2C2A",
+    desc: "你有自己的节奏，外界再热闹也影响不了你。不是不社交，是你把能量都给了真正有意思的事。考前开窍、研究深入、逻辑清晰——这届北理最稳的存在。",
+    traits: [
+      { name: "专注力", pct: 90, color: "#F2A7B0" },
+      { name: "社交欲", pct: 30, color: "#F2A7B0" },
+      { name: "执行力", pct: 75, color: "#F2A7B0" },
+      { name: "冒险值", pct: 40, color: "#F2A7B0" }
+    ]
+  },
+  rest: {
+    emoji: "🌙", title: "躺平人", sub: "宿舍是我的宇宙",
+    tag: "佛系型", tagBg: "#E1F5EE", tagColor: "#085041",
+    heroBg: "#F0FBF6", emojiWrapBg: "#C8EEE1", titleColor: "#1A3D30",
+    desc: "看起来啥都不急，其实内心戏超多。别人在卷的时候你在充电，等别人精疲力尽你才刚进状态。精神内耗但快乐，是你的人生哲学。",
+    traits: [
+      { name: "专注力", pct: 55, color: "#5DCAA5" },
+      { name: "社交欲", pct: 45, color: "#5DCAA5" },
+      { name: "执行力", pct: 40, color: "#5DCAA5" },
+      { name: "冒险值", pct: 35, color: "#5DCAA5" }
+    ]
+  },
+  social: {
+    emoji: "☕", title: "搭子人", sub: "永远在找人一起",
+    tag: "社交型", tagBg: "#FAECE7", tagColor: "#712B13",
+    heroBg: "#FDF3EF", emojiWrapBg: "#F5C4B3", titleColor: "#4A2010",
+    desc: "你是行走的连接器，饭搭子、学习搭子、出行搭子——反正不能一个人。你让集体有温度，让陌生人变熟人。北理的社交网络因为有你才转得起来。",
+    traits: [
+      { name: "专注力", pct: 50, color: "#F0997B" },
+      { name: "社交欲", pct: 95, color: "#F0997B" },
+      { name: "执行力", pct: 65, color: "#F0997B" },
+      { name: "冒险值", pct: 60, color: "#F0997B" }
+    ]
+  },
+  go: {
+    emoji: "🗺️", title: "冲浪人", sub: "校园里的探索者",
+    tag: "行动型", tagBg: "#EEEDFE", tagColor: "#3C3489",
+    heroBg: "#F5F4FE", emojiWrapBg: "#CECBF6", titleColor: "#26215C",
+    desc: "简历永远在更新，活动永远在报名。你把大学当成一片海，踩着浪往前冲。看起来很忙，但你乐在其中。毕业时你的故事比别人多三倍。",
+    traits: [
+      { name: "专注力", pct: 60, color: "#AFA9EC" },
+      { name: "社交欲", pct: 70, color: "#AFA9EC" },
+      { name: "执行力", pct: 85, color: "#AFA9EC" },
+      { name: "冒险值", pct: 92, color: "#AFA9EC" }
+    ]
+  }
+};
+
+let cur = 0, scores = {lab:0,rest:0,social:0,go:0}, selected = null;
+const letters = ['A','B','C','D'];
+
+function show(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function startQuiz() {
+  cur = 0; scores = {lab:0,rest:0,social:0,go:0}; selected = null;
+  renderQ(); show('page-quiz');
+}
+
+function renderQ() {
+  const q = questions[cur];
+  document.getElementById('progress').style.width = (cur / questions.length * 100) + '%';
+  document.getElementById('q-count').textContent = 'Q' + (cur+1) + ' / ' + questions.length;
+
+  document.getElementById('q-dots').innerHTML = questions.map((_,i) =>
+    `<div class="q-dot ${i < cur ? 'done' : i === cur ? 'cur' : ''}"></div>`
+  ).join('');
+
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('options').innerHTML = q.options.map((o,i) =>
+    `<button class="opt" data-type="${o.type}" onclick="pick(this)">
+      <span class="opt-letter">${letters[i]}</span>
+      <span>${o.label}</span>
+    </button>`
+  ).join('');
+
+  selected = null;
+  const nb = document.getElementById('next-btn');
+  nb.classList.remove('active');
+  nb.textContent = cur === questions.length - 1 ? '查看结果 →' : '下一题 →';
+}
+
+function pick(btn) {
+  document.querySelectorAll('.opt').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selected = btn.dataset.type;
+  document.getElementById('next-btn').classList.add('active');
+}
+
+document.getElementById('next-btn').addEventListener('click', function() {
+  if (!selected) return;
+  scores[selected]++;
+  cur++;
+  if (cur >= questions.length) showResult();
+  else renderQ();
+});
+
+function showResult() {
+  const top = Object.entries(scores).sort((a,b) => b[1]-a[1])[0][0];
+  const r = results[top];
+
+  document.getElementById('result-hero').style.background = r.heroBg;
+  document.getElementById('result-hero').innerHTML = `
+    <div class="result-emoji-wrap" style="background:${r.emojiWrapBg}">${r.emoji}</div>
+    <div class="result-title" style="color:${r.titleColor}">${r.title}</div>
+    <div class="result-sub" style="color:${r.titleColor}">${r.sub}</div>
+    <span class="result-tag" style="background:${r.tagBg};color:${r.tagColor}">${r.tag}</span>
+  `;
+  document.getElementById('result-desc').textContent = r.desc;
+  document.getElementById('trait-bars').innerHTML = r.traits.map(t =>
+    `<div class="trait-row">
+      <span class="trait-name">${t.name}</span>
+      <div class="trait-bg"><div class="trait-fill" style="width:${t.pct}%;background:${t.color}"></div></div>
+      <span class="trait-pct">${t.pct}</span>
+    </div>`
+  ).join('');
+
+  show('page-result');
+}
+
+function restart() {
+  cur=0; scores={lab:0,rest:0,social:0,go:0}; selected=null;
+  show('page-cover');
+}
+</script>
+</body>
+</html>
